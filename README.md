@@ -66,7 +66,7 @@ This will:
 5. Print final balances and the full transaction log (also written to
    `transactions.log`).
 
-## Possible extensions (good talking points if asked "what would you add?")
+## Possible extensions 
 - Swap the in-memory `BankService` map for JDBC + MySQL persistence.
 - Add a `LoanAccount` type to show the Factory/abstract-class design scales.
 - Expose it over a small REST layer (Spark/Javalin) instead of a console demo.
