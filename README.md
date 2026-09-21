@@ -55,6 +55,32 @@ javac -d out @sources.txt
 java -cp out com.vaultcore.Main
 ```
 
+## Running the tests
+The `test/` folder has a JUnit 5 suite (30 tests) covering deposits, withdrawals,
+transfers, the Factory/BankService layer, and — most importantly — concurrency:
+100 threads transferring between the same two accounts at once, 50 threads
+depositing into the same account at once, and two threads transferring in
+opposite directions on purpose (the classic deadlock setup) to prove the
+lock ordering in `Account.transfer()` actually prevents it.
+
+The JUnit console-standalone jar is bundled in `lib/` so no build tool or
+internet access is needed:
+
+```bash
+find src -name "*.java" > sources.txt
+find test -name "*.java" > test_sources.txt
+javac -d out @sources.txt
+javac -cp "out:lib/junit-platform-console-standalone-1.9.1.jar" -d test-out @test_sources.txt
+java -jar lib/junit-platform-console-standalone-1.9.1.jar \
+  --class-path "out:test-out" --scan-class-path "test-out"
+```
+
+(On Windows, use `;` instead of `:` in the `--class-path` value.)
+
+**In IntelliJ:** right-click the `test` folder → "Run All Tests". IntelliJ
+will offer to add JUnit to the module's classpath automatically the first
+time — accept it, or point it at the jar in `lib/`.
+
 This will:
 1. Open a `SavingsAccount` and a `CurrentAccount` for two customers (one premium).
 2. Run a few single-threaded sanity checks, including a deliberately-failing
