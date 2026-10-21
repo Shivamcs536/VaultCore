@@ -14,6 +14,7 @@ import com.vaultcore.model.SavingsAccount;
 public final class AccountFactory {
 
     private AccountFactory() { } // static factory, no instances needed
+    //constructor is private other classes cannot directly create AccountFactory()
 
     public static Account createAccount(String type, String accountNumber, Customer owner, double initialBalance) {
         if (type == null) {

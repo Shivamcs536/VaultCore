@@ -15,6 +15,8 @@ import java.util.Map;
  */
 public class BankService {
 
+    //BankService.java is like the bank manager in your project. It keeps track of
+    // accounts, creates accounts through the factory, finds accounts, and applies interest.
     private final Map<String, Account> accounts = new LinkedHashMap<>();
 
     public synchronized Account openAccount(String type, String accountNumber, Customer owner, double initialBalance) {

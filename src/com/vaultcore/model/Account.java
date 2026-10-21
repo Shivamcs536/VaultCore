@@ -28,19 +28,13 @@ public abstract class Account implements Transactable {
 
     public String getAccountNumber() { return accountNumber; }
     public Customer getOwner() { return owner; }
+    public synchronized double getBalance() { return balance; }
+    // synchronized : only one thread at a time can use this eg: getBalance()
 
-    public synchronized double getBalance() {
-        return balance;
-    }
-
-    /** Each subclass decides how interest is calculated (or not at all). */
     public abstract double calculateInterest();
 
-    /** Each subclass decides its floor: 0, a positive minimum, or a
-     *  negative number to represent an overdraft limit. */
     public abstract double getMinimumBalance();
 
-    /** Human-readable label used in logs and reports. */
     public abstract String getAccountType();
 
     @Override
@@ -66,11 +60,6 @@ public abstract class Account implements Transactable {
         TransactionLogger.getInstance().log(accountNumber, "WITHDRAW", amount, balance);
     }
 
-    /**
-     * Transfers between two accounts. Locks are acquired in a fixed order
-     * (by account number) so two threads transferring in opposite
-     * directions at the same time can never deadlock.
-     */
     @Override
     public void transfer(Account to, double amount) throws InsufficientFundsException {
         if (to == null) {
@@ -87,9 +76,6 @@ public abstract class Account implements Transactable {
         }
     }
 
-    /** Internal credit used only by transfer(), kept separate from the
-     *  public deposit() so the log entry reads "TRANSFER_IN" instead of
-     *  "DEPOSIT". Still guarded by the same monitor as everything else. */
     private synchronized void creditFromTransfer(double amount) {
         balance += amount;
         TransactionLogger.getInstance().log(accountNumber, "TRANSFER_IN", amount, balance);
